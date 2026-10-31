@@ -75,7 +75,7 @@ const Lobby = () => {
   const [isSelectingTeam, setIsSelectingTeam] = useState(null);
   const [isUpdatingSettings, setIsUpdatingSettings] = useState(false);
   const [guestName, setGuestName] = useState('');
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  const [isGuestMode, setIsGuestMode] = useState(true);
   const [banError, setBanError] = useState(null);
   const [actionError, setActionError] = useState(null);
   const [showBotInfo, setShowBotInfo] = useState(false);
@@ -382,14 +382,14 @@ const Lobby = () => {
 
                 <div className="relative py-2 flex items-center justify-center">
                   <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5" /></div>
-                  <span className="relative bg-[#0c0c0c] px-4 text-[9px] font-black text-gray-700 uppercase tracking-widest italic">Or enter as temporary guest</span>
+                  <span className="relative bg-[#0c0c0c] px-4 text-[9px] font-black text-gray-700 uppercase tracking-widest italic">Enter your name to play</span>
                 </div>
 
                 <button
                   onClick={() => setIsGuestMode(true)}
                   className="w-full h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-3 text-gray-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all font-black uppercase tracking-widest text-xs cursor-pointer active:scale-95"
                 >
-                  <Users size={18} /> Join as Guest
+                  <Users size={18} /> Enter Your Name & Play
                 </button>
               </div>
             ) : (
@@ -400,7 +400,7 @@ const Lobby = () => {
                     type="text"
                     value={guestName}
                     onChange={(e) => setGuestName(e.target.value)}
-                    placeholder="e.g. THALA"
+                    placeholder="Enter your name"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white font-black uppercase text-sm tracking-[0.2em] placeholder:text-gray-800 focus:outline-none focus:border-orange-500/50 transition-all"
                     autoFocus
                   />
@@ -414,13 +414,6 @@ const Lobby = () => {
                   {isUpdatingSettings ? <Loader2 size={18} className="animate-spin" /> : <span>Step into Hub</span>}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setIsGuestMode(false)}
-                  className="w-full text-[9px] font-black text-gray-600 hover:text-white uppercase tracking-[0.4em] transition-colors"
-                >
-                  ← Use Google Account
-                </button>
               </form>
             )}
           </div>

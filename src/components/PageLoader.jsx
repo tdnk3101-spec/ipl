@@ -12,7 +12,7 @@ const GAME_TIPS = [
   "DID YOU KNOW: CrickAuction enforces the overseas quota automatically - max 8 in Mega, 4 in Classic, 2 in Sprint.",
   "TIP: Toggle your room Public or Private before starting so only the right players can join.",
   "DID YOU KNOW: Every completed auction is saved to your History tab with full squads, spends, and ratings.",
-  "TIP: No account needed - continue as a guest manager and start bidding in seconds."
+  "TIP: Enter your name and start bidding in seconds."
 ];
 
 const PageLoader = ({ isGame = false }) => {

@@ -124,7 +124,7 @@ const LandingPage = () => {
   const [expandedSession, setExpandedSession] = useState(null);
   const [sessionToDelete, setSessionToDelete] = useState(null);
 
-  const [isGuestMode, setIsGuestMode] = useState(false);
+  const [isGuestMode, setIsGuestMode] = useState(true);
   const [guestName, setGuestName] = useState("");
 
   const { user, loginWithGoogle, loginAsGuest, logout } = useAuth();
@@ -596,11 +596,11 @@ const LandingPage = () => {
             {/* Right Side: Welcome Login Form */}
             <div className="lg:col-span-5 w-full p-8 md:p-10 flex flex-col items-center justify-center">
               <h2 className="text-xl font-black uppercase tracking-tight mb-1">
-                {isGuestMode ? "Guest Access" : "Welcome, Manager"}
+                Enter Your Name & Play
               </h2>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-8">
                 {isGuestMode
-                  ? "Enter a name to join"
+                  ? "Enter your name to join"
                   : "Sign in to enter the auction hub"}
               </p>
 
@@ -663,7 +663,7 @@ const LandingPage = () => {
                 <form onSubmit={handleGuestSignIn} className="w-full space-y-4">
                   <div className="space-y-2">
                     <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                      Your Manager Name
+                      Enter Your Name
                     </label>
                     <input
                       type="text"
@@ -685,7 +685,7 @@ const LandingPage = () => {
                       {isSubmitting ? (
                         <Loader2 size={18} className="animate-spin" />
                       ) : (
-                        <span>Start Auction Hub</span>
+                        <span>Enter & Play</span>
                       )}
                       {!isSubmitting && (
                         <ChevronRight
@@ -696,13 +696,6 @@ const LandingPage = () => {
                     </div>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setIsGuestMode(false)}
-                    className="w-full text-[9px] font-black text-gray-400 hover:text-white uppercase tracking-[0.3em] transition-colors mt-2"
-                  >
-                    ← Back to Google Login
-                  </button>
                 </form>
               )}
 
