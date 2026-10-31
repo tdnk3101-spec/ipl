@@ -70,7 +70,7 @@ const LandingPage = () => {
         return "hotspot";
       }
     }
-    return "cloud";
+    return getAvailableServers().length > 0 ? "cloud" : "hotspot";
   });
   const [auctionType, setAuctionType] = useState("mega"); 
   const [isPublicRoom, setIsPublicRoom] = useState(true);
@@ -442,7 +442,9 @@ const LandingPage = () => {
       const displayName = user.displayName || "Manager";
 
       if (activeTab === "new") {
-        if (hostingType === "hotspot") {
+        // Without a configured Firebase RTDB, cloud mode cannot create a room.
+        // Use the local engine instead of showing a misleading capacity error.
+        if (hostingType === "hotspot" || availableServers.length === 0) {
           const localRoomId = `HOTSPOT-${generateRoomCode(4)}`;
           try {
             await createRoom(
