@@ -21,11 +21,29 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+function isRealConfigValue(value) {
+  return typeof value === 'string' &&
+    value.trim().length > 0 &&
+    !/^your_|_here$|placeholder/i.test(value.trim());
+}
+
+function isValidDatabaseUrl(value) {
+  if (!isRealConfigValue(value)) return false;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'https:' &&
+      (url.hostname.endsWith('.firebaseio.com') ||
+        url.hostname.endsWith('.firebasedatabase.app'));
+  } catch {
+    return false;
+  }
+}
+
 export const hasFirebaseAuthConfig = Boolean(
-  firebaseConfig.apiKey &&
-  firebaseConfig.authDomain &&
-  firebaseConfig.projectId &&
-  firebaseConfig.appId,
+  isRealConfigValue(firebaseConfig.apiKey) &&
+  isRealConfigValue(firebaseConfig.authDomain) &&
+  isRealConfigValue(firebaseConfig.projectId) &&
+  isRealConfigValue(firebaseConfig.appId),
 );
 
 const app = hasFirebaseAuthConfig ? initializeApp(firebaseConfig) : null;
@@ -55,15 +73,24 @@ export { analytics };
 // avoids the "invalid credentials" warning that occurs when a key from one
 // project is used against another project's database URL.
 
-const primaryDatabaseURL = (
-  import.meta.env.VITE_RTDB_A_URL || ''
-).trim();
+const primaryDatabaseURL = isValidDatabaseUrl(
+  (import.meta.env.VITE_RTDB_A_URL || '').trim(),
+)
+  ? import.meta.env.VITE_RTDB_A_URL.trim()
+  : '';
 
-const secondaryDatabaseURL = (
-  import.meta.env.VITE_RTDB_B_URL ||
-  import.meta.env.VITE_FIREBASE_B_DATABASE_URL ||
-  ''
-).trim();
+const configuredDatabaseURL = isValidDatabaseUrl(firebaseConfig.databaseURL)
+  ? firebaseConfig.databaseURL.trim()
+  : '';
+
+const secondaryDatabaseURL = (() => {
+  const value = (
+    import.meta.env.VITE_RTDB_B_URL ||
+    import.meta.env.VITE_FIREBASE_B_DATABASE_URL ||
+    ''
+  ).trim();
+  return isValidDatabaseUrl(value) ? value : '';
+})();
 
 const PRIMARY_APP_NAME   = 'ipl-auction-rtdb-primary';
 const SECONDARY_APP_NAME = 'ipl-auction-rtdb-secondary';
@@ -105,7 +132,7 @@ function createOverrideDatabase(databaseURL, appName, envPrefix) {
 }
 
 const primaryRtdb   = createOverrideDatabase(primaryDatabaseURL, PRIMARY_APP_NAME, 'VITE_RTDB_A') ||
-  (app && firebaseConfig.databaseURL ? getDatabase(app) : null);
+  (app && configuredDatabaseURL ? getDatabase(app, configuredDatabaseURL) : null);
 const secondaryRtdb = createOverrideDatabase(secondaryDatabaseURL, SECONDARY_APP_NAME, 'VITE_RTDB_B');
 
 export const SECONDARY_SERVER_ENABLED = Boolean(secondaryRtdb);
