@@ -14,7 +14,7 @@
   Evaluate your drafted squad using the advanced Franchise Strength rating system.<br />
   Experience sub-second latency bidding backed by a sophisticated hybrid database architecture.
 
-  [Play Now](https://crickauction.in) • [Documentation](#documentation) • [Releases](https://github.com/Shaurya01836/ipl-auction/releases) • [Contributing](#develop-and-contribute)
+  [Play Now](https://crickauction.in) • [Complete Documentation](./PROJECT_DOCUMENTATION.md) • [Contributing](#develop-and-contribute)
   <br />
   <br />
 </div>
@@ -149,6 +149,7 @@ Open a bug report from your own GitHub account. A few sentences in your own word
 Contributions are welcome across code, docs, examples, and tests. Start by cloning the repository and running `npm install`. Read the standard contribution guidelines before opening a pull request.
 
 ## Documentation
+- **[PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md)**: Complete setup, technology stack, architecture, Firebase/Supabase configuration, local modes, testing, deployment, Git workflow, and troubleshooting.
 - **scripts/autoUpdateFantasy.js**: Auto-calculates points from live CricAPI matches.
 - **scripts/backfillIPL2026.js**: Imports IPL series scorecards.
 - **scripts/deployDatabaseRules.js**: Syncs security rules to Firebase RTDB.
