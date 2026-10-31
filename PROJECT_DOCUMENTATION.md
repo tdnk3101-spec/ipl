@@ -233,6 +233,29 @@ The current schema is designed for the browser client and includes public
 read/insert/update policies for auction gameplay. Review and tighten those
 policies before exposing sensitive administrative data.
 
+To verify the schema from the Supabase SQL Editor, run:
+
+```sql
+select table_schema, table_name
+from information_schema.tables
+where table_schema = 'public'
+  and table_name in ('auctions', 'teams', 'user_squads', 'fantasy_config')
+order by table_name;
+```
+
+The result must contain all four tables. A request to `/rest/v1/` by itself
+may return `401`; that endpoint is not a reliable application health check.
+Test a known table instead, for example:
+
+```text
+https://your-project-ref.supabase.co/rest/v1/auctions?select=id&limit=1
+```
+
+Before the schema is applied, the expected response is PostgREST error
+`PGRST205` stating that `public.auctions` cannot be found. After applying the
+schema, the response should be HTTP 200 with an empty JSON array when no
+auctions exist.
+
 ## 9. Run modes
 
 ### Name-based local play
@@ -342,10 +365,13 @@ Google login.
 
 ### Supabase 401 Unauthorized
 
-Confirm that the Supabase URL and publishable/anon key belong to the same
-project. Copy the publishable key again from Supabase Project Settings → API.
-Do not use a database connection string, password, or service-role key in the
-browser. After changing `.env`, restart Vite and rebuild the Vercel deployment.
+First test `/auth/v1/settings` and a known table endpoint. If
+`/auth/v1/settings` returns HTTP 200, the URL and publishable key are valid.
+If the table endpoint returns `PGRST205`, the connection is working and only
+the schema is missing; run `scripts/supabase_schema.sql` in the SQL Editor.
+Only replace the key if `/auth/v1/settings` also returns 401. Do not use a
+database connection string, password, or service-role key in the browser.
+After changing `.env`, restart Vite and rebuild the Vercel deployment.
 
 ### Cloud auction server capacity error
 
