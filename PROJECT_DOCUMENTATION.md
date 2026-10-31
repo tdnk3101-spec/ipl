@@ -176,11 +176,22 @@ Use the Supabase Project URL and the current publishable key from Project
 Settings → API. Do not use a PostgreSQL connection string in the frontend.
 Do not use a Supabase service-role key in `VITE_*` variables.
 
+### Application administration
+
+```env
+VITE_ADMIN_EMAIL=admin@example.com
+```
+
+Set this to the administrator email allowed to access the protected admin
+interface. This is only a frontend email gate and does not replace Firebase
+security rules.
+
 ### Optional integrations
 
 ```env
 VITE_GEMINI_API_KEY=...
 VITE_AGORA_APP_ID=...
+VITE_GIPHY_API_KEY=...
 VITE_ADSENSE_CLIENT_ID=...
 VITE_ADSENSE_LANDING_FOOTER_SLOT=...
 CRICKET_API_KEY=...
@@ -272,10 +283,22 @@ Output directory: dist
 ```
 
 4. Add the required `VITE_*` variables under Vercel Project Settings →
-   Environment Variables.
-5. Select Production, Preview, and Development environments as appropriate.
-6. Deploy or redeploy after saving variables.
-7. Add the Vercel hostname to Firebase Authorized domains.
+   Environment Variables. At minimum, add verified Firebase variables for
+   cloud multiplayer and the Supabase URL plus publishable/anon key for
+   persistence.
+5. Add `VITE_ADMIN_EMAIL` if the admin interface is needed.
+6. Select Production, Preview, and Development environments as appropriate.
+7. Deploy or redeploy after saving variables.
+8. Add the Vercel hostname to Firebase Authorized domains.
+
+Vercel does not read your local `.env` file. Values must be entered in the
+Vercel dashboard (or configured through the Vercel CLI), then a new deployment
+must be created. Never commit `.env` to GitHub to make deployment work.
+
+For a safe first deployment, configure only Firebase and Supabase variables
+that have been copied and verified from their respective dashboards. Leave
+optional integrations unset until their credentials are available. The
+application still supports name-based offline play without cloud credentials.
 
 [`vercel.json`](./vercel.json) rewrites client-side routes to `index.html`, so
 refreshing `/lobby/ROOMCODE` or `/auction/ROOMCODE` works correctly.
@@ -320,8 +343,9 @@ Google login.
 ### Supabase 401 Unauthorized
 
 Confirm that the Supabase URL and publishable/anon key belong to the same
-project. Do not use a database connection string or service-role key in the
-browser.
+project. Copy the publishable key again from Supabase Project Settings → API.
+Do not use a database connection string, password, or service-role key in the
+browser. After changing `.env`, restart Vite and rebuild the Vercel deployment.
 
 ### Cloud auction server capacity error
 
