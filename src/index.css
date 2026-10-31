@@ -53,6 +53,25 @@ textarea,
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Keep form controls selectable and focusable on mobile browsers. */
+input,
+textarea,
+select,
+.mobile-text-input {
+  pointer-events: auto;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation;
+}
+
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
 /* Prevent unwanted selection on rapid action buttons (e.g. Bid button) */
 button, .no-select {
   -webkit-touch-callout: none;

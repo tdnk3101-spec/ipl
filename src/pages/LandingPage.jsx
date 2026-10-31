@@ -40,7 +40,6 @@ import {
   RefreshCw,
   Clock,
 } from "lucide-react";
-import GithubStarButton from "../components/GithubStarButton";
 import BuyMeACoffee from "../components/BuyMeACoffee";
 import ConfirmDialog from "../components/ConfirmDialog";
 import AuctionActivityFeed from "../components/AuctionActivityFeed";
@@ -538,7 +537,6 @@ const LandingPage = () => {
   if (!user) {
     return (
       <main className="relative min-h-screen bg-[#050505] flex flex-col items-center justify-center pt-10 px-4 font-sans text-white overflow-x-hidden">
-        <GithubStarButton />
         <BuyMeACoffee />
 
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -667,10 +665,13 @@ const LandingPage = () => {
                     </label>
                     <input
                       type="text"
+                      inputMode="text"
+                      enterKeyHint="done"
+                      autoComplete="name"
                       value={guestName}
                       onChange={(e) => setGuestName(e.target.value)}
                       placeholder="e.g. MS Dhoni"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white font-black uppercase text-sm tracking-widest placeholder:text-gray-800 focus:outline-none focus:border-orange-500/50 transition-all"
+                      className="mobile-text-input w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-white font-black uppercase text-sm tracking-widest placeholder:text-gray-800 focus:outline-none focus:border-orange-500/50 transition-all"
                       autoFocus
                     />
                   </div>
@@ -726,7 +727,6 @@ const LandingPage = () => {
   // ─── Signed In: Show Create / Join / History ───
   return (
     <main className="relative min-h-screen bg-[#050505] flex flex-col items-center justify-center pt-10 px-4 font-sans text-white overflow-x-hidden">
-      <GithubStarButton />
       <BuyMeACoffee />
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -1180,9 +1180,15 @@ const LandingPage = () => {
                     </div>
                     <input
                       type="text"
+                      inputMode="text"
+                      enterKeyHint="join"
+                      autoCapitalize="characters"
+                      autoCorrect="off"
+                      spellCheck="false"
+                      autoComplete="off"
                       value={roomCode}
                       onChange={(e) => setRoomCode(e.target.value)}
-                      className="w-full bg-[#111] border border-white/10 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3.5 focus:outline-none focus:border-orange-500/50 transition-all text-white font-black uppercase tracking-[0.25em] sm:tracking-[0.4em] text-center text-sm sm:text-base placeholder:tracking-normal placeholder:text-[10px] sm:placeholder:text-xs placeholder:text-gray-500"
+                      className="mobile-text-input w-full bg-[#111] border border-white/10 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3.5 focus:outline-none focus:border-orange-500/50 transition-all text-white font-black uppercase tracking-[0.25em] sm:tracking-[0.4em] text-center text-sm sm:text-base placeholder:tracking-normal placeholder:text-[10px] sm:placeholder:text-xs placeholder:text-gray-500"
                       placeholder="e.g. AB12CD or HOTSPOT-4921"
                     />
                   </div>
