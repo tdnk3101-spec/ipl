@@ -3,9 +3,9 @@
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system;
-  --color-ipl-blue: #0b0e1e;
-  --color-ipl-gold: #d4af37;
-  --color-ipl-dark: #0b0e1e;
+  --color-ipl-blue: #10182d;
+  --color-ipl-gold: #e0b84c;
+  --color-ipl-dark: #10182d;
 }
 
 /* Desktop compact mode: the 125% browser-zoom view (roughly 1200px CSS wide)
@@ -28,7 +28,10 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background-color: black;
+  background-color: #050814;
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(37, 99, 235, 0.08), transparent 30rem),
+    radial-gradient(circle at 88% 18%, rgba(245, 158, 11, 0.06), transparent 26rem);
   color: white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -86,7 +89,7 @@ button, .no-select {
 }
 
 .ipl-text-gradient {
-  background: linear-gradient(135deg, #fff 0%, #d4af37 100%);
+  background: linear-gradient(135deg, #fff 0%, #e0b84c 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -132,9 +135,9 @@ button, .no-select {
 .text-premium-gradient {
   background: linear-gradient(135deg,
       #fff 0%,
-      #fbbf24 25%,
-      #f59e0b 50%,
-      #fbbf24 75%,
+      #fcda70 25%,
+      #e0b84c 50%,
+      #fcda70 75%,
       #fff 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
