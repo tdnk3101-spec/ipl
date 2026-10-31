@@ -49,6 +49,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (!auth) {
+      markLoaderSeen();
+      return undefined;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       const isLandingPage = typeof window !== 'undefined' && window.location.pathname === '/';

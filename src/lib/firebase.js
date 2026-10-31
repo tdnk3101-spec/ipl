@@ -21,17 +21,27 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
+const hasFirebaseConfig = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.authDomain &&
+  firebaseConfig.databaseURL &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId,
+);
 
-export const auth = getAuth(app);
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentMultipleTabManager()
-  })
-});
+const app = hasFirebaseConfig ? initializeApp(firebaseConfig) : null;
+
+export const auth = app ? getAuth(app) : null;
+export const db = app
+  ? initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    })
+  : null;
 // Defer Analytics until after first paint — removes it from the critical path
 let analytics = null;
-if (typeof window !== 'undefined') {
+if (app && typeof window !== 'undefined') {
   window.addEventListener('load', () => {
     import('firebase/analytics').then(({ getAnalytics }) => {
       analytics = getAnalytics(app);
@@ -95,7 +105,8 @@ function createOverrideDatabase(databaseURL, appName, envPrefix) {
   }
 }
 
-const primaryRtdb   = createOverrideDatabase(primaryDatabaseURL,   PRIMARY_APP_NAME,   'VITE_RTDB_A') || getDatabase(app);
+const primaryRtdb   = createOverrideDatabase(primaryDatabaseURL, PRIMARY_APP_NAME, 'VITE_RTDB_A') ||
+  (app ? getDatabase(app) : null);
 const secondaryRtdb = createOverrideDatabase(secondaryDatabaseURL, SECONDARY_APP_NAME, 'VITE_RTDB_B');
 
 export const SECONDARY_SERVER_ENABLED = Boolean(secondaryRtdb);
@@ -140,7 +151,7 @@ export function getActiveServer() {
 // No database is connected while the user is browsing the landing page,
 // public lobby or history. Only room entry calls goOnlineServer().
 try {
-  goOffline(primaryRtdb);
+  if (primaryRtdb) goOffline(primaryRtdb);
   if (secondaryRtdb) goOffline(secondaryRtdb);
 } catch {
   // Offline mode is a courtesy; the SDK reconnects automatically when asked.
