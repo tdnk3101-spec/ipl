@@ -21,15 +21,14 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-const hasFirebaseConfig = Boolean(
+export const hasFirebaseAuthConfig = Boolean(
   firebaseConfig.apiKey &&
   firebaseConfig.authDomain &&
-  firebaseConfig.databaseURL &&
   firebaseConfig.projectId &&
   firebaseConfig.appId,
 );
 
-const app = hasFirebaseConfig ? initializeApp(firebaseConfig) : null;
+const app = hasFirebaseAuthConfig ? initializeApp(firebaseConfig) : null;
 
 export const auth = app ? getAuth(app) : null;
 export const db = app
@@ -106,7 +105,7 @@ function createOverrideDatabase(databaseURL, appName, envPrefix) {
 }
 
 const primaryRtdb   = createOverrideDatabase(primaryDatabaseURL, PRIMARY_APP_NAME, 'VITE_RTDB_A') ||
-  (app ? getDatabase(app) : null);
+  (app && firebaseConfig.databaseURL ? getDatabase(app) : null);
 const secondaryRtdb = createOverrideDatabase(secondaryDatabaseURL, SECONDARY_APP_NAME, 'VITE_RTDB_B');
 
 export const SECONDARY_SERVER_ENABLED = Boolean(secondaryRtdb);

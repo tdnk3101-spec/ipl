@@ -266,7 +266,7 @@ const Lobby = () => {
       await loginWithGoogle();
     } catch (error) {
       console.error('[lobby] Google sign-in failed', error);
-      setActionError('Sign-in failed. Please try again.');
+      setActionError(error?.message || 'Sign-in failed. Please try again.');
     } finally {
       setIsUpdatingSettings(false);
     }
@@ -281,7 +281,7 @@ const Lobby = () => {
       await loginAsGuest(guestName);
     } catch (error) {
       console.error('[lobby] Guest sign-in failed', error);
-      setActionError('Could not join as a guest. Please try again.');
+      setActionError(error?.message || 'Could not join as a guest. Please try again.');
     } finally {
       setIsUpdatingSettings(false);
     }

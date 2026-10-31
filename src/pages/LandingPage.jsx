@@ -410,8 +410,8 @@ const LandingPage = () => {
   const handleGoogleSignIn = async () => {
     try {
       await loginWithGoogle();
-    } catch {
-      setError("Sign-in failed. Please try again.");
+    } catch (error) {
+      setError(error?.message || "Sign-in failed. Please try again.");
       setTimeout(() => setError(""), 3000);
     }
   };
@@ -426,8 +426,8 @@ const LandingPage = () => {
     try {
       await loginAsGuest(guestName.trim());
       setIsSubmitting(false);
-    } catch {
-      setError("Guest login failed. Ensure Anonymous Auth is enabled.");
+    } catch (error) {
+      setError(error?.message || "Guest login failed. Ensure Anonymous Auth is enabled.");
       setTimeout(() => setError(""), 3000);
       setIsSubmitting(false);
     }

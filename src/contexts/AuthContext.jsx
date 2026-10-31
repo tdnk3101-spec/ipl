@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
-import { auth } from '../lib/firebase';
+import { auth, hasFirebaseAuthConfig } from '../lib/firebase';
 import {
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect,
   GoogleAuthProvider,
+  getRedirectResult,
   signOut,
   signInAnonymously,
   updateProfile
@@ -22,6 +24,45 @@ const AuthContext = createContext({
 });
 
 const googleProvider = new GoogleAuthProvider();
+
+function createLocalGuest(displayName) {
+  const storedUser = window.localStorage.getItem('ipl_local_guest');
+  if (storedUser) {
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      window.localStorage.removeItem('ipl_local_guest');
+    }
+  }
+
+  const uid = globalThis.crypto?.randomUUID?.() ||
+    `local-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const localUser = {
+    uid,
+    displayName,
+    isAnonymous: true,
+    isLocalGuest: true,
+  };
+  window.localStorage.setItem('ipl_local_guest', JSON.stringify(localUser));
+  return localUser;
+}
+
+function authErrorMessage(error) {
+  switch (error?.code) {
+    case 'auth/unauthorized-domain':
+      return `This domain is not authorized in Firebase. Add ${window.location.hostname} in Firebase Console > Authentication > Settings > Authorized domains.`;
+    case 'auth/popup-blocked':
+      return 'The Google sign-in popup was blocked. Allow popups for this site and try again.';
+    case 'auth/popup-closed-by-user':
+      return 'Google sign-in was cancelled before it completed.';
+    case 'auth/operation-not-allowed':
+      return 'Google sign-in is disabled. Enable Google under Firebase Console > Authentication > Sign-in method.';
+    case 'auth/invalid-api-key':
+      return 'The Firebase API key is invalid. Check the VITE_FIREBASE_* variables.';
+    default:
+      return error?.message || 'Authentication failed. Please try again.';
+  }
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -54,6 +95,10 @@ export const AuthProvider = ({ children }) => {
       return undefined;
     }
 
+    getRedirectResult(auth).catch((error) => {
+      console.error('[auth] Google redirect sign-in failed', error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       const isLandingPage = typeof window !== 'undefined' && window.location.pathname === '/';
@@ -76,18 +121,47 @@ export const AuthProvider = ({ children }) => {
 
 
   const loginWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
+    if (!auth || !hasFirebaseAuthConfig) {
+      throw new Error('Google sign-in is unavailable until Firebase Authentication is configured.');
+    }
+
+    if (window.matchMedia('(max-width: 640px)').matches) {
+      await signInWithRedirect(auth, googleProvider);
+      return null;
+    }
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    } catch (error) {
+      if (error?.code === 'auth/popup-blocked') {
+        await signInWithRedirect(auth, googleProvider);
+        return null;
+      }
+      throw new Error(authErrorMessage(error), { cause: error });
+    }
   };
 
   const loginAsGuest = async (displayName) => {
-    const result = await signInAnonymously(auth);
-    await updateProfile(result.user, { displayName });
-    setUser({ ...result.user, displayName });
-    return result.user;
+    if (!auth) {
+      const localUser = createLocalGuest(displayName);
+      setUser(localUser);
+      return localUser;
+    }
+
+    try {
+      const result = await signInAnonymously(auth);
+      await updateProfile(result.user, { displayName });
+      return result.user;
+    } catch (error) {
+      throw new Error(authErrorMessage(error), { cause: error });
+    }
   };
 
-  const logout = () => signOut(auth);
+  const logout = () => {
+    window.localStorage.removeItem('ipl_local_guest');
+    return auth ? signOut(auth) : setUser(null);
+  };
 
   const value = {
     user,
